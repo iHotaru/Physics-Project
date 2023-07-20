@@ -7,6 +7,10 @@ import math.Vector2D;
 
 public class Rectangle {
 	
+	/*
+	 this is still not done yet
+	 */
+	
 	public Vector2D position = new Vector2D();
 	public Vector2D velocity = new Vector2D();
 	public int height = 0;

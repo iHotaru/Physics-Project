@@ -138,8 +138,6 @@ public class WindowPanel extends JPanel implements Runnable{
 		ball1.drawBWVec(wall5, g2);
 		ball2.drawBWVec(wall5, g2);
 		
-		//rect1.drawRect(g2, Color.pink);
-		
 		g2.dispose();
 		
 	}
