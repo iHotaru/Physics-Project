@@ -9,6 +9,8 @@ public class Collision {
 		Vector2D center1 = a.position.add(new Vector2D(a.radius, a.radius));
 		Vector2D center2 = b.position.add(new Vector2D(b.radius, b.radius));
 		
+		//detects whether the balls are colliding by comparing both radii to the distance between balls
+		//if the distance between balls is less than the radius of both balls then there is a collision 
 		if(a.radius + b.radius >= center1.subtract(center2).magnitude()) {
 			return true;
 		}
@@ -26,11 +28,11 @@ public class Collision {
 		Vector2D dist = center1.subtract(center2);
 		//length of both radii - actuall distance between positions is equal to depth of penetration
 		double penDepth = a.radius + b.radius - dist.magnitude();
-		
+		//gets unit vector of normal line and scales it by half of the penetration depth
 		Vector2D penRes = dist.unitVec().scalar(penDepth/2);
-		
+		//moves position of ball 'a' by half of penetration depth
 		a.position = a.position.add(penRes);
-		
+		//moves position of ball 'b' by half of penetration depth in opposite direction
 		b.position = b.position.add(penRes.scalar(-1));
 	}
 	
@@ -53,7 +55,7 @@ public class Collision {
 		//finding magnitude of velocity along unit tangent using dot product
 		double tanMagA = Vector2D.dot(a.velVec, tangent);
 		double tanMagB = Vector2D.dot(b.velVec, tangent);
-		//adding together the normal and tangential lines to get new velocity |||| Remember that the normal components swap but the tangential components stay the same
+		//adding together the normal and tangential lines to get new velocity
 		a.velVec = normal.scalar(normalMagA).add(tangent.scalar(tanMagA));
 		b.velVec = normal.scalar(normalMagB).add(tangent.scalar(tanMagB));
 		
@@ -63,25 +65,30 @@ public class Collision {
 		
 		Vector2D center = b1.position.add(new Vector2D(b1.radius, b1.radius));
 		
-		Vector2D ballToWallStart = w1.startPoint.subtract(center);
-		if(Vector2D.dot(w1.wallUnitVec(), ballToWallStart) > 0) {
+		//if the dot product of the ball is negative compared to the walls starting point then we know that is the closest point
+		Vector2D wallStartToBall = center.subtract(w1.startPoint);
+		if(Vector2D.dot(w1.wallUnitVec(), wallStartToBall) < 0) {
 			return w1.startPoint;
 		}
-		
+		//same thing as above except with the ending point
 		Vector2D wallEndToBall= center.subtract(w1.endPoint);
 		if(Vector2D.dot(w1.wallUnitVec(), wallEndToBall) > 0) {
 			return w1.endPoint;
 		}
-		
-		double closestDist = Vector2D.dot(w1.wallUnitVec(), ballToWallStart);
+		//for the closest distance we get the dot product of the ball To Walls starting point with the unit vector of the wall itself
+		double closestDist = Vector2D.dot(w1.wallUnitVec(), wallStartToBall);
+		//we then use the dot product to scale the walls unit vector up 
 		Vector2D closestVec = w1.wallUnitVec().scalar(closestDist);
-		return w1.startPoint.subtract(closestVec);
+		//we then add from the starting point vector to get a vector pointing to the closest point the ball is from the wall
+		return w1.startPoint.add(closestVec);
 	}
 	
 	public static boolean collisionDetectionBW(Ball b1, Wall w1) {
 		
 		Vector2D center = b1.position.add(new Vector2D(b1.radius, b1.radius));
 		
+		//we subtract the position vector by the closest point to ge the distance between the position and the closest point
+		//then we compare the radius to the magnitude of the vector to see if there is a collision
 		if(b1.radius >= center.subtract(closestPointBW(b1, w1)).magnitude()) {
 			return true;
 		}
@@ -93,9 +100,10 @@ public class Collision {
 	
 	public static void penResBW(Ball b1, Wall w1) {
 		Vector2D center = b1.position.add(new Vector2D(b1.radius, b1.radius));
-		
+		//this is just the distance vector of the position of the ball with the closest point of the ball to the wall
 		Vector2D penVec = center.subtract(closestPointBW(b1, w1));
-		
+		//adds back to the position vector the amount the ball went through the wall
+		//(radius) - (distance between center and wall) = (amount ball penetrated the wall)
 		b1.position = b1.position.add(penVec.unitVec().scalar(b1.radius-penVec.magnitude()));
 	}
 	

@@ -14,6 +14,7 @@ public class Ball {
 	public int diameter = 0;
 	public double radius = 0;
 	public double elasticity = 0;
+	//for friction 0<x<1 |||| best result 0<x<0.1
 	double friction = 0.00;
 	double mass = 0;
 	
@@ -95,6 +96,4 @@ public class Ball {
 		this.position.y += velVec.y;
 	}
 	
-	
-
 }
